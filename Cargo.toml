@@ -1,6 +1,9 @@
 [package]
-name = "lao_format"
+name = "Lao_date_format"
 version = "0.1.0"
-edition = "2024"
-
+edition = "2021"
+authors = ["bounkyokth@hotmail.com>"]
+description = "format international standard to laos date format"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/GIOKTH/lao_date_format"
 [dependencies]

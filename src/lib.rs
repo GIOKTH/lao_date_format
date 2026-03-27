@@ -10,10 +10,10 @@
 //!
 //! ## Example
 //! ```
-//! use lao_datetime::LaoDateTime;
+//! use lao_format::LaoDateTime;
 //!
 //! let dt = LaoDateTime::new(2024, 3, 27, 14, 30, 0);
-//! println!("{}", dt.format_lao_full()); // ວັນພຸດ ທີ 27 ເດືອນມີນາ ປີ 2567
+//! println!("{}", dt.unwrap().format_lao_full()); // ວັນພຸດ ທີ 27 ເດືອນມີນາ ປີ 2567
 //! ```
 
 use std::fmt;
