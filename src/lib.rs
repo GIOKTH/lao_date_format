@@ -10,10 +10,10 @@
 //!
 //! ## Example
 //! ```
-//! use Lao_date_format::LaoDateTime;
+//! use lao_date_format::LaoDateTime;
 //!
 //! let dt = LaoDateTime::new(2024, 3, 27, 14, 30, 0);
-//! println!("{}", dt.unwrap().format_lao_full()); // ວັນພຸດ ທີ 27 ເດືອນມີນາ ປີ 2567
+//! println!("{}", dt.unwrap().format_lao_full()); // ວັນພຸດ ທີ ໒໗ ເດືອນມີນາ ປີ ໒໕໖໗
 //! ```
 
 use std::fmt;
@@ -102,7 +102,7 @@ impl LaoDateTime {
     }
 
     /// Format date in full Lao format
-    /// Example: "ວັນພຸດ ທີ 27 ເດືອນມີນາ ປີ 2567"
+    /// Example: "ວັນພຸດ ທີ ໒໗ ເດືອນມີນາ ປີ ໒໕໖໗"
     pub fn format_lao_full(&self) -> String {
         format!(
             "ວັນ{} ທີ {} ເດືອນ{} ປີ {}",
@@ -113,8 +113,8 @@ impl LaoDateTime {
         )
     }
 
-    /// Format date in short Lao format
-    /// Example: "27/3/2567"
+    /// Format date in short Lao format (Buddhist Era)
+    /// Example: "໒໗/໓/໒໕໖໗"
     pub fn format_lao_short(&self) -> String {
         format!(
             "{}/{}/{}",
@@ -124,8 +124,52 @@ impl LaoDateTime {
         )
     }
 
+    /// Format date in dd/mm/yyyy format (Gregorian Era, Arabic numerals)
+    /// Example: "27/03/2024"
+    pub fn format_standard(&self) -> String {
+        format!(
+            "{:02}/{:02}/{}",
+            self.day,
+            self.month,
+            self.year
+        )
+    }
+
+    /// Format date in dd-mm-yyyy format (Gregorian Era, Arabic numerals)
+    /// Example: "27-03-2024"
+    pub fn format_standard_dash(&self) -> String {
+        format!(
+            "{:02}-{:02}-{}",
+            self.day,
+            self.month,
+            self.year
+        )
+    }
+
+    /// Format date in dd-MM-yyyy format (Gregorian Era, Lao month name)
+    /// Example: "31-ມັງກອນ-2026"
+    pub fn format_lao_month_dash(&self) -> String {
+        format!(
+            "{:02}-{}-{}",
+            self.day,
+            self.month_lao(),
+            self.year
+        )
+    }
+
+    /// Format date in dd/MM/yyyy format (Gregorian Era, Lao month name)
+    /// Example: "31/ມັງກອນ/2026"
+    pub fn format_lao_month_slash(&self) -> String {
+        format!(
+            "{:02}/{}/{}",
+            self.day,
+            self.month_lao(),
+            self.year
+        )
+    }
+
     /// Format time in Lao numbers
-    /// Example: "໑໔:໓໐:໐໐"
+    /// Example: "໑໔:໓໐:໐໕"
     pub fn format_lao_time(&self) -> String {
         format!(
             "{}:{}:{}",
@@ -398,6 +442,30 @@ mod tests {
     fn test_lao_time_formatting() {
         let dt = LaoDateTime::new(2024, 3, 27, 14, 30, 5).unwrap();
         assert_eq!(dt.format_lao_time(), "໑໔:໓໐:໐໕");
+    }
+
+    #[test]
+    fn test_format_standard() {
+        let dt = LaoDateTime::new(2026, 12, 31, 0, 0, 0).unwrap();
+        assert_eq!(dt.format_standard(), "31/12/2026");
+    }
+
+    #[test]
+    fn test_format_standard_dash() {
+        let dt = LaoDateTime::new(2026, 12, 31, 0, 0, 0).unwrap();
+        assert_eq!(dt.format_standard_dash(), "31-12-2026");
+    }
+
+    #[test]
+    fn test_format_lao_month_dash() {
+        let dt = LaoDateTime::new(2026, 1, 31, 0, 0, 0).unwrap();
+        assert_eq!(dt.format_lao_month_dash(), "31-ມັງກອນ-2026");
+    }
+
+    #[test]
+    fn test_format_lao_month_slash() {
+        let dt = LaoDateTime::new(2026, 1, 31, 0, 0, 0).unwrap();
+        assert_eq!(dt.format_lao_month_slash(), "31/ມັງກອນ/2026");
     }
 
     #[test]
