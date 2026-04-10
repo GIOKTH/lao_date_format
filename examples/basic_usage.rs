@@ -1,4 +1,4 @@
-use Lao_date_format::{LaoDateTime, to_lao_number, from_lao_number, parse_lao_date};
+use Lao_date_format::{LaoDateTime, to_lao_number, from_lao_number, parse_lao_date, number_to_lao_text, string_number_to_lao_text};
 
 fn main() {
     println!("=== Lao DateTime Library Examples ===\n");
@@ -26,15 +26,28 @@ fn main() {
     println!("Lao Month (slash): {}", jan_dt.format_lao_month_slash());
     println!();
 
-    // Example 4: Buddhist Era conversion
-    println!("--- Example 4: Buddhist Era Conversion ---");
+    // Example 4: Number to Lao Text
+    println!("--- Example 4: Number to Lao Text ---");
+    let amounts = [123, 211, 2_003, 2_071, 2_001,2_101, 2_500, 1_000_000, 1_234_567_890, 2_100_000_001];
+    let amounts_str = ["123", "211.2", "2003.10", "2071.04", "2001.00","2101.50", "2500.03", "1000000.07", "1234567890.05", "2100000001.01"];
+    for &amt in &amounts {
+        println!("Arabic: {:12} → Lao Text: {}", amt, number_to_lao_text(amt));
+    }
+    println!("---------------- from string number to text ------------------");
+    for &amt in &amounts_str {
+        println!("Arabic: {:12} → Lao Text: {}", amt, string_number_to_lao_text(amt));
+    }
+    println!();
+
+    // Example 5: Buddhist Era conversion
+    println!("--- Example 5: Buddhist Era Conversion ---");
     let new_year = LaoDateTime::new(2024, 1, 1, 0, 0, 0).unwrap();
     println!("Gregorian Year: {}", new_year.year());
     println!("Buddhist Era: {}", new_year.year_be());
     println!();
 
-    // Example 5: Month and weekday names
-    println!("--- Example 5: Month and Weekday Names ---");
+    // Example 6: Month and weekday names
+    println!("--- Example 6: Month and Weekday Names ---");
     for month in 1..=3 {
         let dt = LaoDateTime::new(2024, month, 1, 0, 0, 0).unwrap();
         println!("Month {}: {}", month, dt.month_lao());
@@ -48,8 +61,8 @@ fn main() {
     }
     println!();
 
-    // Example 6: Number conversion
-    println!("--- Example 6: Number Conversion ---");
+    // Example 7: Number conversion (Numerals)
+    println!("--- Example 7: Number Conversion (Numerals) ---");
     let numbers = [0, 123, 2567, -42];
     for num in numbers {
         let lao = to_lao_number(num);
@@ -57,8 +70,8 @@ fn main() {
     }
     println!();
 
-    // Example 7: Parse Lao numbers
-    println!("--- Example 7: Parse Lao Numbers ---");
+    // Example 8: Parse Lao numbers
+    println!("--- Example 8: Parse Lao Numbers ---");
     let lao_numbers = ["໐", "໑໒໓", "໒໕໖໗", "-໔໒"];
     for lao_num in lao_numbers {
         match from_lao_number(lao_num) {
@@ -68,8 +81,8 @@ fn main() {
     }
     println!();
 
-    // Example 8: Parse dates
-    println!("--- Example 8: Parse Lao Date Strings ---");
+    // Example 9: Parse dates
+    println!("--- Example 9: Parse Lao Date Strings ---");
     let date_strings = ["໒໗/໓/໒໕໖໗", "27/3/2567", "1/1/2567"];
     for date_str in date_strings {
         match parse_lao_date(date_str) {
@@ -81,8 +94,8 @@ fn main() {
     }
     println!();
 
-    // Example 9: Current date simulation
-    println!("--- Example 9: Various Date Formats ---");
+    // Example 10: Current date simulation
+    println!("--- Example 10: Various Date Formats ---");
     let christmas = LaoDateTime::new(2024, 12, 25, 18, 0, 0).unwrap();
     println!("Christmas 2024:");
     println!("  Full Lao:      {}", christmas.format_lao_full());
@@ -91,8 +104,8 @@ fn main() {
     println!("  Weekday:       {}", christmas.weekday_lao());
     println!();
 
-    // Example 10: Error handling
-    println!("--- Example 10: Error Handling ---");
+    // Example 11: Error handling
+    println!("--- Example 11: Error Handling ---");
     match LaoDateTime::new(2024, 13, 1, 0, 0, 0) {
         Ok(_) => println!("Should not reach here"),
         Err(e) => println!("Expected error for invalid month: {}", e),

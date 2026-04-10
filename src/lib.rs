@@ -6,6 +6,7 @@
 //! - Format dates in Lao language (ວັນ, ເດືອນ, ປີ)
 //! - Buddhist Era (BE) calendar conversion
 //! - Lao number formatting (໐໑໒໓໔໕໖໗໘໙)
+//! - Number to Lao text conversion (ໜຶ່ງຮ້ອຍຊາວສາມ)
 //! - Parse Lao date strings back to DateTime
 //!
 //! ## Example
@@ -39,6 +40,12 @@ impl LaoDateTime {
     /// * `hour` - Hour (0-23)
     /// * `minute` - Minute (0-59)
     /// * `second` - Second (0-59)
+    ///
+    /// # Example
+    /// ```
+    /// use Lao_date_format::LaoDateTime;
+    /// let dt = LaoDateTime::new(2024, 3, 27, 14, 30, 0).unwrap();
+    /// ```
     pub fn new(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8) -> Result<Self, DateTimeError> {
         if !(1..=12).contains(&month) {
             return Err(DateTimeError::InvalidMonth);
@@ -102,7 +109,13 @@ impl LaoDateTime {
     }
 
     /// Format date in full Lao format
-    /// Example: "ວັນພຸດ ທີ ໒໗ ເດືອນມີນາ ປີ ໒໕໖໗"
+    ///
+    /// # Example
+    /// ```
+    /// use Lao_date_format::LaoDateTime;
+    /// let dt = LaoDateTime::new(2024, 3, 27, 0, 0, 0).unwrap();
+    /// assert_eq!(dt.format_lao_full(), "ວັນພຸດ ທີ ໒໗ ເດືອນມີນາ ປີ ໒໕໖໗");
+    /// ```
     pub fn format_lao_full(&self) -> String {
         format!(
             "ວັນ{} ທີ {} ເດືອນ{} ປີ {}",
@@ -114,7 +127,13 @@ impl LaoDateTime {
     }
 
     /// Format date in short Lao format (Buddhist Era)
-    /// Example: "໒໗/໓/໒໕໖໗"
+    ///
+    /// # Example
+    /// ```
+    /// use Lao_date_format::LaoDateTime;
+    /// let dt = LaoDateTime::new(2024, 3, 27, 0, 0, 0).unwrap();
+    /// assert_eq!(dt.format_lao_short(), "໒໗/໓/໒໕໖໗");
+    /// ```
     pub fn format_lao_short(&self) -> String {
         format!(
             "{}/{}/{}",
@@ -125,7 +144,13 @@ impl LaoDateTime {
     }
 
     /// Format date in dd/mm/yyyy format (Gregorian Era, Arabic numerals)
-    /// Example: "27/03/2024"
+    ///
+    /// # Example
+    /// ```
+    /// use Lao_date_format::LaoDateTime;
+    /// let dt = LaoDateTime::new(2024, 3, 27, 0, 0, 0).unwrap();
+    /// assert_eq!(dt.format_standard(), "27/03/2024");
+    /// ```
     pub fn format_standard(&self) -> String {
         format!(
             "{:02}/{:02}/{}",
@@ -136,7 +161,13 @@ impl LaoDateTime {
     }
 
     /// Format date in dd-mm-yyyy format (Gregorian Era, Arabic numerals)
-    /// Example: "27-03-2024"
+    ///
+    /// # Example
+    /// ```
+    /// use Lao_date_format::LaoDateTime;
+    /// let dt = LaoDateTime::new(2024, 3, 27, 0, 0, 0).unwrap();
+    /// assert_eq!(dt.format_standard_dash(), "27-03-2024");
+    /// ```
     pub fn format_standard_dash(&self) -> String {
         format!(
             "{:02}-{:02}-{}",
@@ -147,7 +178,13 @@ impl LaoDateTime {
     }
 
     /// Format date in dd-MM-yyyy format (Gregorian Era, Lao month name)
-    /// Example: "31-ມັງກອນ-2026"
+    ///
+    /// # Example
+    /// ```
+    /// use Lao_date_format::LaoDateTime;
+    /// let dt = LaoDateTime::new(2026, 1, 31, 0, 0, 0).unwrap();
+    /// assert_eq!(dt.format_lao_month_dash(), "31-ມັງກອນ-2026");
+    /// ```
     pub fn format_lao_month_dash(&self) -> String {
         format!(
             "{:02}-{}-{}",
@@ -158,7 +195,13 @@ impl LaoDateTime {
     }
 
     /// Format date in dd/MM/yyyy format (Gregorian Era, Lao month name)
-    /// Example: "31/ມັງກອນ/2026"
+    ///
+    /// # Example
+    /// ```
+    /// use Lao_date_format::LaoDateTime;
+    /// let dt = LaoDateTime::new(2026, 1, 31, 0, 0, 0).unwrap();
+    /// assert_eq!(dt.format_lao_month_slash(), "31/ມັງກອນ/2026");
+    /// ```
     pub fn format_lao_month_slash(&self) -> String {
         format!(
             "{:02}/{}/{}",
@@ -169,7 +212,13 @@ impl LaoDateTime {
     }
 
     /// Format time in Lao numbers
-    /// Example: "໑໔:໓໐:໐໕"
+    ///
+    /// # Example
+    /// ```
+    /// use Lao_date_format::LaoDateTime;
+    /// let dt = LaoDateTime::new(2024, 3, 27, 14, 30, 5).unwrap();
+    /// assert_eq!(dt.format_lao_time(), "໑໔:໓໐:໐໕");
+    /// ```
     pub fn format_lao_time(&self) -> String {
         format!(
             "{}:{}:{}",
@@ -223,56 +272,68 @@ impl LaoDateTime {
     fn calculate_weekday(&self) -> u8 {
         let mut year = self.year;
         let mut month = self.month as i32;
-        
+
         if month < 3 {
             month += 12;
             year -= 1;
         }
-        
+
         let k = year % 100;
         let j = year / 100;
-        
+
         let h = (self.day as i32 + (13 * (month + 1)) / 5 + k + k / 4 + j / 4 - 2 * j) % 7;
-        
+
         // Convert to 0=Sunday format
         ((h + 6) % 7) as u8
     }
 }
 
 /// Convert a number to Lao numerals
+///
+/// # Example
+/// ```
+/// use Lao_date_format::to_lao_number;
+/// assert_eq!(to_lao_number(123), "໑໒໓");
+/// ```
 pub fn to_lao_number(num: i32) -> String {
     let lao_digits = ['໐', '໑', '໒', '໓', '໔', '໕', '໖', '໗', '໘', '໙'];
-    
+
     if num == 0 {
         return lao_digits[0].to_string();
     }
-    
+
     let is_negative = num < 0;
     let mut n = num.abs();
     let mut result = String::new();
-    
+
     while n > 0 {
         let digit = (n % 10) as usize;
         result.insert(0, lao_digits[digit]);
         n /= 10;
     }
-    
+
     if is_negative {
         result.insert(0, '-');
     }
-    
+
     result
 }
 
 /// Convert a number to Lao numerals with padding
+///
+/// # Example
+/// ```
+/// use Lao_date_format::to_lao_number_padded;
+/// assert_eq!(to_lao_number_padded(5, 2), "໐໕");
+/// ```
 pub fn to_lao_number_padded(num: i32, width: usize) -> String {
     let lao_zero = '໐';
     let result = to_lao_number(num.abs());
     let is_negative = num < 0;
-    
+
     // Count actual characters (Lao digits are multi-byte)
     let result_len = result.chars().count();
-    
+
     if result_len >= width {
         if is_negative {
             format!("-{}", result)
@@ -289,22 +350,291 @@ pub fn to_lao_number_padded(num: i32, width: usize) -> String {
     }
 }
 
+/// Convert a number to Lao text representation
+///
+/// # Example
+/// ```
+/// use Lao_date_format::{number_to_lao_text, string_number_to_lao_text};
+/// assert_eq!(number_to_lao_text(123), "ໜຶ່ງຮ້ອຍຊາວສາມ");
+/// assert_eq!(number_to_lao_text(1000000), "ໜຶ່ງລ້ານ");
+/// assert_eq!(number_to_lao_text(1000001), "ໜຶ່ງລ້ານ");
+/// assert_eq!(string_number_to_lao_text("123"), "ໜຶ່ງຮ້ອຍຊາວສາມ");
+/// assert_eq!(string_number_to_lao_text("1000000"), "ໜຶ່ງລ້ານ");
+/// assert_eq!(string_number_to_lao_text("1000001"), "ໜຶ່ງລ້ານ");
+/// ```
+pub fn number_to_lao_text(num: u64) -> String {
+    if num == 0 {
+        return "ສູນ".to_string();
+    }
+
+    fn read_under_million(num: u64) -> String {
+        let units = ["", "ສິບ", "ຮ້ອຍ", "ພັນ", "ໝື່ນ", "ແສນ"];
+        let digits = ["", "ໜຶ່ງ", "ສອງ", "ສາມ", "ສີ່", "ຫ້າ", "ຫົກ", "ເຈັດ", "ແປດ", "ເກົ້າ"];
+
+        let s = num.to_string();
+        let len = s.len();
+        let mut result = String::new();
+
+        for (i, c) in s.chars().enumerate() {
+            let digit = c.to_digit(10).unwrap() as usize;
+            let pos = len - i - 1;
+
+            if digit == 0 {
+                continue;
+            }
+
+            match pos {
+                1 => {
+                    // tens
+                    match digit {
+                        1 => result.push_str("ສິບ"),
+                        2 => result.push_str("ຊາວ"),
+                        _ => {
+                            result.push_str(digits[digit]);
+                            result.push_str("ສິບ");
+                        }
+                    }
+                }
+                0 => {
+                    // ones
+                    if digit == 1 && i > 0 {
+                        // check tens digit
+                        let prev_digit = s.chars().nth(i - 1).unwrap().to_digit(10).unwrap();
+                        if prev_digit != 0 {
+                            result.push_str("ເອັດ");
+                        } else {
+                            result.push_str("ໜຶ່ງ");
+                        }
+                    } else {
+                        result.push_str(digits[digit]);
+                    }
+                }
+                _ => {
+                    result.push_str(digits[digit]);
+                    result.push_str(units[pos]);
+                }
+            }
+        }
+
+        result
+    }
+
+    let mut result = String::new();
+    let mut n = num;
+    let mut million_count = 0;
+
+    while n > 0 {
+        let chunk = n % 1_000_000;
+
+        if chunk != 0 {
+            let mut part = read_under_million(chunk);
+
+            if million_count > 0 {
+                part.push_str("ລ້ານ");
+                if million_count > 1 {
+                    part.push_str(&"ລ້ານ".repeat((million_count - 1) as usize));
+                }
+            }
+
+            result = format!("{}{}", part, result);
+        }
+
+        n /= 1_000_000;
+        million_count += 1;
+    }
+
+    result
+}
+
+/*pub fn string_number_to_lao_text(num: &str) -> String {
+    if num.trim() == "0" {
+        return "ສູນ".to_string();
+    }
+
+    let parts: Vec<&str> = num.split('.').collect();
+
+    let integer_part = parts[0];
+    let decimal_part = if parts.len() > 1 { Some(parts[1]) } else { None };
+
+    let mut result = read_integer(integer_part);
+
+    if let Some(decimal) = decimal_part {
+        if !decimal.is_empty() {
+            result.push_str("ຈຸດ");
+            for c in decimal.chars() {
+                let digit = c.to_digit(10).unwrap() as usize;
+                result.push_str(match digit {
+                    0 => "ສູນ",
+                    1 => "ໜຶ່ງ",
+                    2 => "ສອງ",
+                    3 => "ສາມ",
+                    4 => "ສີ່",
+                    5 => "ຫ້າ",
+                    6 => "ຫົກ",
+                    7 => "ເຈັດ",
+                    8 => "ແປດ",
+                    9 => "ເກົ້າ",
+                    _ => "",
+                });
+            }
+        }
+    }
+
+    result
+}*/
+pub fn string_number_to_lao_text(num: &str) -> String {
+    if num.trim() == "0" {
+        return "ສູນ".to_string();
+    }
+
+    let parts: Vec<&str> = num.split('.').collect();
+    let integer_part = parts[0];
+    let decimal_part = if parts.len() > 1 { Some(parts[1]) } else { None };
+
+    let mut result = read_integer(integer_part);
+
+    // ===== DECIMAL PART =====
+    if let Some(decimal) = decimal_part {
+        if !decimal.is_empty() {
+            result.push_str("ຈຸດ");
+
+            // case 1: starts with 0 → read digit by digit
+            if decimal.starts_with('0') {
+                for c in decimal.chars() {
+                    result.push_str(match c {
+                        '0' => "ສູນ",
+                        '1' => "ໜຶ່ງ",
+                        '2' => "ສອງ",
+                        '3' => "ສາມ",
+                        '4' => "ສີ່",
+                        '5' => "ຫ້າ",
+                        '6' => "ຫົກ",
+                        '7' => "ເຈັດ",
+                        '8' => "ແປດ",
+                        '9' => "ເກົ້າ",
+                        _ => "",
+                    });
+                }
+            } else {
+                // case 2: normal number (trim trailing zero)
+                let trimmed = decimal.trim_end_matches('0');
+                if !trimmed.is_empty() {
+                    result.push_str(&read_integer(trimmed));
+                }
+            }
+        }
+    }
+
+    result
+}
+
+// ================= INTEGER =================
+
+fn read_integer(num_str: &str) -> String {
+    let num: u64 = num_str.parse().unwrap_or(0);
+
+    if num == 0 {
+        return "ສູນ".to_string();
+    }
+
+    fn read_under_million(num: u64) -> String {
+        let units = ["", "ສິບ", "ຮ້ອຍ", "ພັນ", "ໝື່ນ", "ແສນ"];
+        let digits = ["", "ໜຶ່ງ", "ສອງ", "ສາມ", "ສີ່", "ຫ້າ", "ຫົກ", "ເຈັດ", "ແປດ", "ເກົ້າ"];
+
+        let s = num.to_string();
+        let len = s.len();
+        let mut result = String::new();
+
+        for (i, c) in s.chars().enumerate() {
+            let digit = c.to_digit(10).unwrap() as usize;
+            let pos = len - i - 1;
+
+            if digit == 0 {
+                continue;
+            }
+
+            match pos {
+                1 => {
+                    match digit {
+                        1 => result.push_str("ສິບ"),
+                        2 => result.push_str("ຊາວ"),
+                        _ => {
+                            result.push_str(digits[digit]);
+                            result.push_str("ສິບ");
+                        }
+                    }
+                }
+                0 => {
+                    if digit == 1 && i > 0 {
+                        let prev_digit = s.chars().nth(i - 1).unwrap().to_digit(10).unwrap();
+                        if prev_digit != 0 {
+                            result.push_str("ເອັດ");
+                        } else {
+                            result.push_str("ໜຶ່ງ");
+                        }
+                    } else {
+                        result.push_str(digits[digit]);
+                    }
+                }
+                _ => {
+                    result.push_str(digits[digit]);
+                    result.push_str(units[pos]);
+                }
+            }
+        }
+
+        result
+    }
+
+    let mut result = String::new();
+    let mut n = num;
+    let mut million_count = 0;
+
+    while n > 0 {
+        let chunk = n % 1_000_000;
+
+        if chunk != 0 {
+            let mut part = read_under_million(chunk);
+
+            if million_count > 0 {
+                part.push_str("ລ້ານ");
+                if million_count > 1 {
+                    part.push_str(&"ລ້ານ".repeat((million_count - 1) as usize));
+                }
+            }
+
+            result = format!("{}{}", part, result);
+        }
+
+        n /= 1_000_000;
+        million_count += 1;
+    }
+
+    result
+}
+
 /// Parse a Lao number string to i32
+///
+/// # Example
+/// ```
+/// use Lao_date_format::from_lao_number;
+/// assert_eq!(from_lao_number("໑໒໓").unwrap(), 123);
+/// ```
 pub fn from_lao_number(lao_num: &str) -> Result<i32, ParseError> {
     let lao_to_arabic: std::collections::HashMap<char, char> = [
         ('໐', '0'), ('໑', '1'), ('໒', '2'), ('໓', '3'), ('໔', '4'),
         ('໕', '5'), ('໖', '6'), ('໗', '7'), ('໘', '8'), ('໙', '9'),
     ].iter().cloned().collect();
-    
+
     let mut arabic = String::new();
     let mut has_negative = false;
-    
+
     for ch in lao_num.chars() {
         if ch == '-' {
             has_negative = true;
             continue;
         }
-        
+
         if let Some(&digit) = lao_to_arabic.get(&ch) {
             arabic.push(digit);
         } else if ch.is_ascii_digit() {
@@ -313,29 +643,36 @@ pub fn from_lao_number(lao_num: &str) -> Result<i32, ParseError> {
             return Err(ParseError::InvalidCharacter(ch));
         }
     }
-    
+
     let num = arabic.parse::<i32>()
         .map_err(|_| ParseError::InvalidNumber)?;
-    
+
     Ok(if has_negative { -num } else { num })
 }
 
 /// Parse a Lao date string
+///
+/// # Example
+/// ```
+/// use Lao_date_format::parse_lao_date;
+/// let dt = parse_lao_date("໒໗/໓/໒໕໖໗").unwrap();
+/// assert_eq!(dt.day(), 27);
+/// ```
 pub fn parse_lao_date(date_str: &str) -> Result<LaoDateTime, ParseError> {
     // Support formats like "໒໗/໓/໒໕໖໗" or "27/3/2567"
     let parts: Vec<&str> = date_str.split('/').collect();
-    
+
     if parts.len() != 3 {
         return Err(ParseError::InvalidFormat);
     }
-    
+
     let day = from_lao_number(parts[0].trim())?;
     let month = from_lao_number(parts[1].trim())?;
     let year_be = from_lao_number(parts[2].trim())?;
-    
+
     // Convert BE to Gregorian
     let year = year_be - 543;
-    
+
     LaoDateTime::new(year, month as u8, day as u8, 0, 0, 0)
         .map_err(|e| ParseError::DateTimeError(e))
 }
@@ -396,6 +733,36 @@ mod tests {
         assert_eq!(to_lao_number(123), "໑໒໓");
         assert_eq!(to_lao_number(2567), "໒໕໖໗");
         assert_eq!(to_lao_number(-42), "-໔໒");
+    }
+
+    #[test]
+    fn test_number_to_lao_text() {
+        assert_eq!(number_to_lao_text(0), "ສູນ");
+        assert_eq!(number_to_lao_text(1), "ໜຶ່ງ");
+        assert_eq!(number_to_lao_text(10), "ສິບ");
+        assert_eq!(number_to_lao_text(11), "ສິບເອັດ");
+        assert_eq!(number_to_lao_text(20), "ຊາວ");
+        assert_eq!(number_to_lao_text(21), "ຊາວເອັດ");
+        assert_eq!(number_to_lao_text(100), "ໜຶ່ງຮ້ອຍ");
+        assert_eq!(number_to_lao_text(123), "ໜຶ່ງຮ້ອຍຊາວສາມ");
+        assert_eq!(number_to_lao_text(1000), "ໜຶ່ງພັນ");
+        assert_eq!(number_to_lao_text(1000000), "ໜຶ່ງລ້ານ");
+        assert_eq!(number_to_lao_text(1000000000), "ໜຶ່ງຕື້");
+    }
+
+    #[test]
+    fn test_string_number_to_lao_text() {
+        assert_eq!(string_number_to_lao_text("0"), "ສູນ");
+        assert_eq!(string_number_to_lao_text("1"), "ໜຶ່ງ");
+        assert_eq!(string_number_to_lao_text("10"), "ສິບ");
+        assert_eq!(string_number_to_lao_text("11"), "ສິບເອັດ");
+        assert_eq!(string_number_to_lao_text("20"), "ຊາວ");
+        assert_eq!(string_number_to_lao_text("21"), "ຊາວເອັດ");
+        assert_eq!(string_number_to_lao_text("100"), "ໜຶ່ງຮ້ອຍ");
+        assert_eq!(string_number_to_lao_text("123"), "ໜຶ່ງຮ້ອຍຊາວສາມ");
+        assert_eq!(string_number_to_lao_text("1000"), "ໜຶ່ງພັນ");
+        assert_eq!(string_number_to_lao_text("1000000"), "ໜຶ່ງລ້ານ");
+        assert_eq!(string_number_to_lao_text("1000000000"), "ໜຶ່ງຕື້");
     }
 
     #[test]

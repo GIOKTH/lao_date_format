@@ -6,6 +6,7 @@ A Rust library for formatting and parsing dates in Lao language with Buddhist Er
 - Format dates in Lao language (ວັນ, ເດືອນ, ປີ)
 - Buddhist Era (BE) calendar conversion
 - Lao number formatting (໐໑໒໓໔໕໖໗໘໙)
+- **Number to Lao text conversion** (e.g., 123 -> "ໜຶ່ງຮ້ອຍຊາວສາມ")
 - Parse Lao date strings back to DateTime
 - Standard Gregorian date formatting (dd/mm/yyyy, dd-mm-yyyy, dd-MM-yyyy, dd/MM/yyyy)
 
@@ -15,7 +16,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-Lao_date_format = "0.1.2"
+Lao_date_format = "0.2.0"
 ```
 
 ## Usage
@@ -28,6 +29,20 @@ You can create a `LaoDateTime` instance using the `new` constructor:
 use Lao_date_format::LaoDateTime;
 
 let dt = LaoDateTime::new(2024, 3, 27, 14, 30, 0).expect("Invalid DateTime");
+```
+
+### Number to Lao Text
+
+Convert numbers to their full Lao spoken text representation:
+
+```rust
+use Lao_date_format::number_to_lao_text;
+
+println!("{}", number_to_lao_text(123));
+// Output: ໜຶ່ງຮ້ອຍຊາວສາມ
+
+println!("{}", number_to_lao_text(1000000));
+// Output: ໜຶ່ງລ້ານ
 ```
 
 ### Formatting Dates and Times
