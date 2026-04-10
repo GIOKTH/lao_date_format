@@ -10,7 +10,7 @@
 //!
 //! ## Example
 //! ```
-//! use lao_date_format::LaoDateTime;
+//! use Lao_date_format::LaoDateTime;
 //!
 //! let dt = LaoDateTime::new(2024, 3, 27, 14, 30, 0);
 //! println!("{}", dt.unwrap().format_lao_full()); // ວັນພຸດ ທີ ໒໗ ເດືອນມີນາ ປີ ໒໕໖໗

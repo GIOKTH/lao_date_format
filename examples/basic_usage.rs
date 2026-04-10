@@ -1,4 +1,4 @@
-use lao_date_format::{LaoDateTime, to_lao_number, from_lao_number, parse_lao_date};
+use Lao_date_format::{LaoDateTime, to_lao_number, from_lao_number, parse_lao_date};
 
 fn main() {
     println!("=== Lao DateTime Library Examples ===\n");

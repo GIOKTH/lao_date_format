@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "lao_date_format"
+name = "Lao_date_format"
 version = "0.1.2"
