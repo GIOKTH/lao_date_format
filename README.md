@@ -16,7 +16,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-Lao_date_format = "0.2.1"
+Lao_date_format = "0.2.2"
 ```
 
 ## Usage
